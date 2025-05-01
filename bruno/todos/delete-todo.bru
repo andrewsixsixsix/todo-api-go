@@ -1,0 +1,11 @@
+meta {
+  name: delete-todo
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{host}}/api/todos
+  body: none
+  auth: inherit
+}
