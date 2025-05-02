@@ -12,7 +12,7 @@ func TodoRouter() *chi.Mux {
 	r.Get("/", handler.GetTodos)
 	r.Post("/", handler.CreateTodo)
 	r.Put("/", handler.UpdateTodo)
-	r.Delete("/", handler.DeleteTodo)
+	r.Delete("/{id}", handler.DeleteTodo)
 
 	return r
 }
