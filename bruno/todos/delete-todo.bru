@@ -5,7 +5,15 @@ meta {
 }
 
 delete {
-  url: {{host}}/api/todos
+  url: {{host}}/api/todos/:id
   body: none
   auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+assert {
+  res.status: eq 200
 }

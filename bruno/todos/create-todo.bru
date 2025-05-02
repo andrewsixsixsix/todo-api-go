@@ -6,6 +6,21 @@ meta {
 
 post {
   url: {{host}}/api/todos
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "title": "ToDo",
+    "description": "The very first ToDo",
+    "dueDate": "2025-06-01",
+    "priority": 3,
+    "status": "T"
+  }
+  
+}
+
+assert {
+  res.status: eq 201
 }
