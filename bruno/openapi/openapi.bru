@@ -1,0 +1,15 @@
+meta {
+  name: openapi
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/api/openapi
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
