@@ -10,8 +10,10 @@ func Router() *chi.Mux {
 
 	r.Use(middleware.Logger)
 
+	openapiRouter := OpenAPIRouter()
 	todoRouter := TodoRouter()
 
+	r.Mount("/api/openapi", openapiRouter)
 	r.Mount("/api/todos", todoRouter)
 
 	return r
