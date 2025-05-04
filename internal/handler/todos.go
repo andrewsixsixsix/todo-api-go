@@ -93,7 +93,7 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: err := todoService.updateTodo(updateTodoReq)
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
@@ -106,5 +106,5 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: err := todoService.deleteTodo(id)
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 }
