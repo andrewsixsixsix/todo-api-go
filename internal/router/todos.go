@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func TodoRouter() *chi.Mux {
+func todoRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Get("/", handler.GetTodos)
