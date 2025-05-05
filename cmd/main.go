@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"todo-api/config"
+	"todo-api/internal/logger"
 	"todo-api/internal/router"
 	"todo-api/openapi"
 )
@@ -21,7 +22,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	logger.Logger = logger.Init()
+
+	logger.Logger.Info("Logger initialized. Level INFO")
+
 	r := router.Router()
+
+	logger.Logger.Info("Router initialized")
 
 	address := fmt.Sprintf("%s:%s", config.GetAppConfig().Host, config.GetAppConfig().Port)
 	http.ListenAndServe(address, r)
