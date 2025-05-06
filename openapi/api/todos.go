@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"todo-api/internal/model"
 
@@ -17,25 +16,21 @@ const (
 func TodosOpenAPI(r *openapi3.Reflector) error {
 	getAllTodosOp, err := getAllTodosOperation(r)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return err
 	}
 
 	createTodoOp, err := createTodoOperation(r)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return err
 	}
 
 	updateTodoOp, err := updateTodoOperation(r)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return err
 	}
 
 	deleteTodoOp, err := deleteTodoOperation(r)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return err
 	}
 
@@ -50,7 +45,6 @@ func TodosOpenAPI(r *openapi3.Reflector) error {
 func getAllTodosOperation(r *openapi3.Reflector) (openapi.OperationContext, error) {
 	op, err := r.NewOperationContext(http.MethodGet, route)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return nil, err
 	}
 
@@ -64,7 +58,6 @@ func getAllTodosOperation(r *openapi3.Reflector) (openapi.OperationContext, erro
 func createTodoOperation(r *openapi3.Reflector) (openapi.OperationContext, error) {
 	op, err := r.NewOperationContext(http.MethodPost, route)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return nil, err
 	}
 
@@ -81,7 +74,6 @@ func createTodoOperation(r *openapi3.Reflector) (openapi.OperationContext, error
 func updateTodoOperation(r *openapi3.Reflector) (openapi.OperationContext, error) {
 	op, err := r.NewOperationContext(http.MethodPut, route)
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return nil, err
 	}
 
@@ -95,7 +87,6 @@ func updateTodoOperation(r *openapi3.Reflector) (openapi.OperationContext, error
 func deleteTodoOperation(r *openapi3.Reflector) (openapi.OperationContext, error) {
 	op, err := r.NewOperationContext(http.MethodDelete, route+"/{id}")
 	if err != nil {
-		fmt.Println("failed to create openapi operation context for todos")
 		return nil, err
 	}
 

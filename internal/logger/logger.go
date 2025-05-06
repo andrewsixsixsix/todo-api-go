@@ -8,6 +8,6 @@ import (
 var Logger *slog.Logger
 
 func Init() *slog.Logger {
-	opts := slog.HandlerOptions{AddSource: true, Level: slog.LevelInfo}
+	opts := slog.HandlerOptions{AddSource: false, Level: slog.LevelInfo}
 	return slog.New(slog.NewJSONHandler(os.Stdout, &opts))
 }

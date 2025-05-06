@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
+	"todo-api/internal/logger"
 )
 
 const (
@@ -14,16 +15,16 @@ const (
 func UI(w http.ResponseWriter, r *http.Request) {
 	projectRoot, err := os.Getwd()
 	if err != nil {
+		logger.Logger.Error("failed to get project's root directory", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to get project's root directory")
 		return
 	}
 
 	swaggerHtmlPath := projectRoot + swaggerHtml
 	swaggerHtml, err := os.ReadFile(swaggerHtmlPath)
 	if err != nil {
+		logger.Logger.Error("failed to read swagger.html", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to read swagger.html")
 		return
 	}
 
@@ -35,16 +36,16 @@ func UI(w http.ResponseWriter, r *http.Request) {
 func OpenAPI(w http.ResponseWriter, r *http.Request) {
 	projectRoot, err := os.Getwd()
 	if err != nil {
+		logger.Logger.Error("failed to get project's root directory", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to get project's root directory")
 		return
 	}
 
 	openapiJsonPath := projectRoot + openapiJson
 	openapiJson, err := os.ReadFile(openapiJsonPath)
 	if err != nil {
+		logger.Logger.Error("failed to read openapi.json", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to read openapi.json")
 		return
 	}
 

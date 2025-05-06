@@ -2,10 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
+	"todo-api/internal/logger"
 	"todo-api/internal/model"
 
 	"github.com/go-chi/chi/v5"
@@ -34,8 +35,8 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 	getTodosRes := model.GetTodosResponse{Todos: todos}
 	res, err := json.Marshal(getTodosRes)
 	if err != nil {
+		logger.Logger.Error("failed to marshal response json", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to marshal response json")
 		return
 	}
 
@@ -46,8 +47,8 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		logger.Logger.Error("failed to read request body", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("failed to read request body")
 		return
 	}
 
@@ -55,8 +56,8 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 
 	createTodoReq := model.CreateTodoRequest{}
 	if err := json.Unmarshal(body, &createTodoReq); err != nil {
+		logger.Logger.Error("failed to unmarshal request json", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("failed to unmarshal request json")
 		return
 	}
 
@@ -65,8 +66,8 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	createTodoRes := model.CreateTodoResponse{ID: id}
 	res, err := json.Marshal(&createTodoRes)
 	if err != nil {
+		logger.Logger.Error("failed to marshal response json", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println("failed to marshal response json")
 		return
 	}
 
@@ -77,8 +78,8 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		logger.Logger.Error("failed to read request body", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("failed to read request body")
 		return
 	}
 
@@ -86,8 +87,8 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 
 	updateTodoReq := model.UpdateTodoRequest{}
 	if err := json.Unmarshal(body, &updateTodoReq); err != nil {
+		logger.Logger.Error("failed to unmarshal request body", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("failed to unmarshal request body")
 		return
 	}
 
@@ -99,8 +100,8 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
+		logger.Logger.Warn("missing id path param", slog.String("url", r.URL.String()))
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println("missing id path param")
 		return
 	}
 

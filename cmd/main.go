@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -12,19 +13,18 @@ import (
 )
 
 func main() {
+	logger.Logger = logger.Init()
+	logger.Logger.Info("Logger initialized. Level: INFO")
+
 	if err := config.ReadAppConfig(); err != nil {
-		fmt.Println("failed to read app config")
+		logger.Logger.Error("failed to read app config", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
 
 	if err := openapi.GenereateOpenAPI(); err != nil {
-		fmt.Println("failed to generate openapi spec")
+		logger.Logger.Error("failed to generate openapi spec", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
-
-	logger.Logger = logger.Init()
-
-	logger.Logger.Info("Logger initialized. Level INFO")
 
 	r := router.Router()
 
