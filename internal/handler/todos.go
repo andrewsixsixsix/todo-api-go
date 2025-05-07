@@ -5,33 +5,31 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"todo-api/internal/logger"
 	"todo-api/internal/model"
+	"todo-api/internal/service"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func GetTodos(w http.ResponseWriter, r *http.Request) {
-	// TODO: todos, err := todoService.findAllTodos()
-	todos := []model.Todo{
-		model.Todo{
-			ID:          1,
-			Title:       "ToDo 1",
-			Description: "ToDo 1 description",
-			DueDate:     "2026-01-01",
-			Priority:    3,
-			Status:      "T",
-		},
-		model.Todo{
-			ID:          2,
-			Title:       "ToDo 2",
-			Description: "ToDo 2 description",
-			DueDate:     "2026-01-01",
-			Priority:    2,
-			Status:      "T",
-		},
+type TodoHandler struct {
+	ts *service.TodoService
+}
+
+func NewTodoHandler(ts *service.TodoService) *TodoHandler {
+	return &TodoHandler{ts: ts}
+}
+
+func (h *TodoHandler) GetTodos(w http.ResponseWriter, r *http.Request) {
+	todos, err := h.ts.FindAllTodos()
+	if err != nil {
+		logger.Logger.Error("failed to find all todos", slog.String("err", err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
+
 	getTodosRes := model.GetTodosResponse{Todos: todos}
 	res, err := json.Marshal(getTodosRes)
 	if err != nil {
@@ -44,7 +42,7 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func CreateTodo(w http.ResponseWriter, r *http.Request) {
+func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logger.Logger.Error("failed to read request body", slog.String("err", err.Error()))
@@ -61,8 +59,13 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: id, err := todoService.createTodo(createTodoReq)
-	id := 1
+	id, err := h.ts.CreateTodo(createTodoReq)
+	if err != nil {
+		logger.Logger.Error("failed to create todo", slog.String("err", err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	createTodoRes := model.CreateTodoResponse{ID: id}
 	res, err := json.Marshal(&createTodoRes)
 	if err != nil {
@@ -75,7 +78,7 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logger.Logger.Error("failed to read request body", slog.String("err", err.Error()))
@@ -92,20 +95,37 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: err := todoService.updateTodo(updateTodoReq)
+	err = h.ts.UpdateTodo(updateTodoReq)
+	if err != nil {
+		logger.Logger.Error("failed to update todo", slog.String("err", err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func DeleteTodo(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	if id == "" {
+func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	if idStr == "" {
 		logger.Logger.Warn("missing id path param", slog.String("url", r.URL.String()))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// TODO: err := todoService.deleteTodo(id)
+	id, err := strconv.ParseInt(idStr, 10, strconv.IntSize)
+	if err != nil {
+		logger.Logger.Warn("failed to convert id string to int", slog.String("id", idStr))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = h.ts.DeleteTodo(id)
+	if err != nil {
+		logger.Logger.Warn("failed to delete todo", slog.String("id", idStr))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	w.WriteHeader(http.StatusNoContent)
 }
