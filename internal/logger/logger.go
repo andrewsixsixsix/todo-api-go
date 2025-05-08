@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// TODO: make private and add getter func
 var Logger *slog.Logger
 
 func Init() *slog.Logger {

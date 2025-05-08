@@ -2,14 +2,15 @@ package service
 
 import (
 	"todo-api/internal/model"
+	"todo-api/internal/storage"
 )
 
 type TodoService struct {
-	// TODO: storage
+	ts *storage.TodoStorage
 }
 
-func NewTodoService() *TodoService {
-	return &TodoService{}
+func NewTodoService(ts *storage.TodoStorage) *TodoService {
+	return &TodoService{ts: ts}
 }
 
 // TODO: return custom errors

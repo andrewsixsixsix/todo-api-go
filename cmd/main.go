@@ -9,6 +9,7 @@ import (
 	"todo-api/config"
 	"todo-api/internal/logger"
 	"todo-api/internal/router"
+	"todo-api/internal/storage"
 	"todo-api/openapi"
 )
 
@@ -29,6 +30,19 @@ func main() {
 	}
 
 	logger.Logger.Info("Storage config read successfully")
+
+	err := storage.Init(config.GetStorageConfig().URL)
+	if err != nil {
+		logger.Logger.Error("failed to initialize storage", slog.String("err", err.Error()))
+		os.Exit(1)
+	}
+
+	if err := storage.Storage().Ping(); err != nil {
+		logger.Logger.Error("storage ping resulted with error", slog.String("err", err.Error()))
+		os.Exit(1)
+	}
+
+	logger.Logger.Info("Storage initialized successfully")
 
 	if err := openapi.GenereateOpenAPI(); err != nil {
 		logger.Logger.Error("failed to generate openapi spec", slog.String("err", err.Error()))
