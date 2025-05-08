@@ -32,7 +32,10 @@ func GenereateOpenAPI() error {
 	}
 
 	openapiJson := root + openapiJsonOutput
-	os.WriteFile(openapiJson, schema, 644)
+	err = os.WriteFile(openapiJson, schema, 644)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

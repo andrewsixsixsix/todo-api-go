@@ -15,7 +15,7 @@ var storageConfig StorageConfig
 func ReadStorageConfig() error {
 	root, err := os.Getwd()
 	if err != nil {
-		return nil
+		return err
 	}
 
 	configPath := root + "/.env"

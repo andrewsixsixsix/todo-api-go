@@ -9,8 +9,8 @@ import (
 var appConfig AppConfig
 
 type AppConfig struct {
-	Host string `env:"HOST" env-required:"true"`
-	Port string `env:"PORT" env-required:"true"`
+	Host string `env:"APP_HOST" env-required:"true"`
+	Port string `env:"APP_PORT" env-required:"true"`
 }
 
 func ReadAppConfig() error {
