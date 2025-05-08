@@ -21,15 +21,29 @@ func main() {
 		os.Exit(1)
 	}
 
+	logger.Logger.Info("App config read successfully")
+
+	if err := config.ReadStorageConfig(); err != nil {
+		logger.Logger.Error("failed to read storage config", slog.String("err", err.Error()))
+		os.Exit(1)
+	}
+
+	logger.Logger.Info("Storage config read successfully")
+
 	if err := openapi.GenereateOpenAPI(); err != nil {
 		logger.Logger.Error("failed to generate openapi spec", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
+
+	logger.Logger.Info("OpenAPI spec generated successfully")
 
 	r := router.Router()
 
 	logger.Logger.Info("Router initialized")
 
 	address := fmt.Sprintf("%s:%s", config.GetAppConfig().Host, config.GetAppConfig().Port)
+
+	logger.Logger.Info("Starting server", slog.String("address", address))
+
 	http.ListenAndServe(address, r)
 }
