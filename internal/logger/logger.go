@@ -5,10 +5,13 @@ import (
 	"os"
 )
 
-// TODO: make private and add getter func
-var Logger *slog.Logger
+var logger *slog.Logger
 
-func Init() *slog.Logger {
+func Init() {
 	opts := slog.HandlerOptions{AddSource: false, Level: slog.LevelInfo}
-	return slog.New(slog.NewJSONHandler(os.Stdout, &opts))
+	logger = slog.New(slog.NewJSONHandler(os.Stdout, &opts))
+}
+
+func Logger() *slog.Logger {
+	return logger
 }

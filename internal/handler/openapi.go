@@ -15,7 +15,7 @@ const (
 func UI(w http.ResponseWriter, r *http.Request) {
 	projectRoot, err := os.Getwd()
 	if err != nil {
-		logger.Logger.Error("failed to get project's root directory", slog.String("err", err.Error()))
+		logger.Logger().Error("failed to get project's root directory", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -23,7 +23,7 @@ func UI(w http.ResponseWriter, r *http.Request) {
 	swaggerHtmlPath := projectRoot + swaggerHtml
 	swaggerHtml, err := os.ReadFile(swaggerHtmlPath)
 	if err != nil {
-		logger.Logger.Error("failed to read swagger.html", slog.String("err", err.Error()))
+		logger.Logger().Error("failed to read swagger.html", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -36,7 +36,7 @@ func UI(w http.ResponseWriter, r *http.Request) {
 func OpenAPI(w http.ResponseWriter, r *http.Request) {
 	projectRoot, err := os.Getwd()
 	if err != nil {
-		logger.Logger.Error("failed to get project's root directory", slog.String("err", err.Error()))
+		logger.Logger().Error("failed to get project's root directory", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -44,7 +44,7 @@ func OpenAPI(w http.ResponseWriter, r *http.Request) {
 	openapiJsonPath := projectRoot + openapiJson
 	openapiJson, err := os.ReadFile(openapiJsonPath)
 	if err != nil {
-		logger.Logger.Error("failed to read openapi.json", slog.String("err", err.Error()))
+		logger.Logger().Error("failed to read openapi.json", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
