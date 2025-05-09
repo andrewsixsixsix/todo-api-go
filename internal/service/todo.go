@@ -5,12 +5,18 @@ import (
 	"todo-api/internal/storage"
 )
 
+var todoService *TodoService
+
 type TodoService struct {
-	ts *storage.TodoStorage
+	todoStorage *storage.TodoStorage
 }
 
-func NewTodoService(ts *storage.TodoStorage) *TodoService {
-	return &TodoService{ts: ts}
+func InitTodoService(todoStorage *storage.TodoStorage) {
+	todoService = &TodoService{todoStorage: todoStorage}
+}
+
+func GetTodoService() *TodoService {
+	return todoService
 }
 
 // TODO: return custom errors

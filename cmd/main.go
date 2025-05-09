@@ -9,6 +9,7 @@ import (
 	"todo-api/config"
 	"todo-api/internal/logger"
 	"todo-api/internal/router"
+	"todo-api/internal/service"
 	"todo-api/internal/storage"
 	"todo-api/openapi"
 )
@@ -32,8 +33,7 @@ func main() {
 
 	logger.Logger().Info("Storage config read successfully")
 
-	err := storage.Init(config.GetStorageConfig().URL)
-	if err != nil {
+	if err := storage.Init(config.GetStorageConfig().URL); err != nil {
 		logger.Logger().Error("failed to initialize storage", slog.String("err", err.Error()))
 		os.Exit(1)
 	}
@@ -51,6 +51,9 @@ func main() {
 	}
 
 	logger.Logger().Info("OpenAPI spec generated successfully")
+
+	storage.InitTodoStorage(storage.Storage())
+	service.InitTodoService(storage.GetTodoStorage())
 
 	r := router.Router()
 

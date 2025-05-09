@@ -2,10 +2,16 @@ package storage
 
 import "database/sql"
 
+var todoStorage *TodoStorage
+
 type TodoStorage struct {
 	storage *sql.DB
 }
 
-func NewTodoStorage(storage *sql.DB) *TodoStorage {
-	return &TodoStorage{storage: storage}
+func InitTodoStorage(storage *sql.DB) {
+	todoStorage = &TodoStorage{storage: storage}
+}
+
+func GetTodoStorage() *TodoStorage {
+	return todoStorage
 }
