@@ -1,7 +1,7 @@
 package model
 
 type CreateTodoResponse struct {
-	ID int `json:"id"`
+	ID TodoID `json:"id"`
 }
 
 type GetTodosResponse struct {

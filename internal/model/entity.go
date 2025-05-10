@@ -1,7 +1,9 @@
 package model
 
+type TodoID int64
+
 type Todo struct {
-	ID          int    `json:"id"`
+	ID          TodoID `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	DueDate     string `json:"dueDate"`

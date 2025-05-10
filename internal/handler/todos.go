@@ -120,7 +120,7 @@ func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.ts.DeleteTodo(id)
+	err = h.ts.DeleteTodo(model.TodoID(id))
 	if err != nil {
 		logger.Logger().Warn("failed to delete todo", slog.String("id", idStr))
 		w.WriteHeader(http.StatusBadRequest)

@@ -22,36 +22,52 @@ func GetTodoService() *TodoService {
 // TODO: return custom errors
 
 func (ts *TodoService) FindAllTodos() ([]model.Todo, error) {
-	todos := []model.Todo{
-		model.Todo{
-			ID:          1,
-			Title:       "ToDo 1",
-			Description: "ToDo 1 description",
-			DueDate:     "2026-01-01",
-			Priority:    3,
-			Status:      "T",
-		},
-		model.Todo{
-			ID:          2,
-			Title:       "ToDo 2",
-			Description: "ToDo 2 description",
-			DueDate:     "2026-01-01",
-			Priority:    2,
-			Status:      "T",
-		},
+	todos, err := ts.todoStorage.FindAll()
+	if err != nil {
+		return nil, err
 	}
 
 	return todos, nil
 }
 
-func (ts *TodoService) CreateTodo(todo model.CreateTodoRequest) (int, error) {
-	return 1, nil
+func (ts *TodoService) CreateTodo(ctr model.CreateTodoRequest) (model.TodoID, error) {
+	todo := model.Todo{
+		Title:       ctr.Title,
+		Description: ctr.Description,
+		DueDate:     ctr.DueDate,
+		Priority:    ctr.Priority,
+		Status:      ctr.Status,
+	}
+
+	id, err := ts.todoStorage.CreateTodo(todo)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
-func (ts *TodoService) UpdateTodo(todo model.UpdateTodoRequest) error {
+func (ts *TodoService) UpdateTodo(utr model.UpdateTodoRequest) error {
+	todo := model.Todo{
+		ID:          utr.ID,
+		Title:       utr.Title,
+		Description: utr.Description,
+		DueDate:     utr.DueDate,
+		Priority:    utr.Priority,
+		Status:      utr.Status,
+	}
+
+	if err := ts.todoStorage.UpdateTodo(todo); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (ts *TodoService) DeleteTodo(id int64) error {
+func (ts *TodoService) DeleteTodo(id model.TodoID) error {
+	if err := ts.todoStorage.DeleteTodo(id); err != nil {
+		return err
+	}
+
 	return nil
 }
