@@ -9,6 +9,7 @@ func Router() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	openapiRouter := openapiRouter()
 	todoRouter := todoRouter()

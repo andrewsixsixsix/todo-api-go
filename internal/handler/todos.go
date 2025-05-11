@@ -12,6 +12,7 @@ import (
 	"todo-api/internal/service"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type TodoHandler struct {
@@ -59,6 +60,33 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: extract into separate func
+	rbvService := service.GetRbvService()
+	if err := rbvService.Validate.Struct(createTodoReq); err != nil {
+		logger.Logger().Error("request body validation failed", slog.String("err", err.Error()))
+
+		w.WriteHeader(http.StatusUnprocessableEntity)
+
+		if ve := err.(validator.ValidationErrors); ve != nil {
+			vfr := model.ValidationFailResponse{
+				Errors: rbvService.CollectValidationFails(ve),
+			}
+
+			res, err := json.Marshal(vfr)
+			if err != nil {
+				logger.Logger().Error("failed to marshal response json", slog.String("err", err.Error()))
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Write(res)
+
+			return
+		}
+
+		return
+	}
+
 	id, err := h.ts.CreateTodo(createTodoReq)
 	if err != nil {
 		logger.Logger().Error("failed to create todo", slog.String("err", err.Error()))
@@ -87,6 +115,8 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
+
+	// TODO: validate request body
 
 	updateTodoReq := model.UpdateTodoRequest{}
 	if err := json.Unmarshal(body, &updateTodoReq); err != nil {

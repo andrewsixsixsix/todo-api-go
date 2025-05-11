@@ -12,6 +12,8 @@ import (
 	"todo-api/internal/service"
 	"todo-api/internal/storage"
 	"todo-api/openapi"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 
 	storage.InitTodoStorage(storage.Storage())
 	service.InitTodoService(storage.GetTodoStorage())
+	service.InitRbvService(validator.New())
 
 	r := router.Router()
 
