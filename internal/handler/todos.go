@@ -12,7 +12,6 @@ import (
 	"todo-api/internal/service"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 )
 
 type TodoHandler struct {
@@ -60,30 +59,22 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: extract into separate func
-	rbvService := service.GetRbvService()
-	if err := rbvService.Validate.Struct(createTodoReq); err != nil {
-		logger.Logger().Error("request body validation failed", slog.String("err", err.Error()))
-
+	vfr, err := service.GetRbvService().ValidateStruct(createTodoReq)
+	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
 
-		if ve := err.(validator.ValidationErrors); ve != nil {
-			vfr := model.ValidationFailResponse{
-				Errors: rbvService.CollectValidationFails(ve),
-			}
-
-			res, err := json.Marshal(vfr)
-			if err != nil {
-				logger.Logger().Error("failed to marshal response json", slog.String("err", err.Error()))
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			w.Write(res)
-
+	if len(vfr.Errors) != 0 {
+		res, err := json.Marshal(vfr)
+		if err != nil {
+			logger.Logger().Error("failed to marshal response json", slog.String("err", err.Error()))
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.Write(res)
 		return
 	}
 
@@ -116,12 +107,29 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	// TODO: validate request body
-
 	updateTodoReq := model.UpdateTodoRequest{}
 	if err := json.Unmarshal(body, &updateTodoReq); err != nil {
 		logger.Logger().Error("failed to unmarshal request body", slog.String("err", err.Error()))
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	vfr, err := service.GetRbvService().ValidateStruct(updateTodoReq)
+	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	if len(vfr.Errors) != 0 {
+		res, err := json.Marshal(vfr)
+		if err != nil {
+			logger.Logger().Error("failed to marshal response json", slog.String("err", err.Error()))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.Write(res)
 		return
 	}
 

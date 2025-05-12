@@ -1,8 +1,10 @@
 package service
 
 import (
+	"log/slog"
 	"reflect"
 	"strings"
+	"todo-api/internal/logger"
 	"todo-api/internal/model"
 
 	"github.com/go-playground/validator/v10"
@@ -23,9 +25,25 @@ func GetRbvService() *RequestBodyValidationService {
 	return rbvService
 }
 
-// TODO: implement Validate method
+func (rbvs *RequestBodyValidationService) ValidateStruct(s any) (model.ValidationFailResponse, error) {
+	if err := rbvService.Validate.Struct(s); err != nil {
+		logger.Logger().Error("request body validation failed", slog.String("err", err.Error()))
 
-func (rbvs *RequestBodyValidationService) CollectValidationFails(ve validator.ValidationErrors) []model.ValidationFail {
+		if ve := err.(validator.ValidationErrors); ve != nil {
+			vfr := model.ValidationFailResponse{
+				Errors: collectValidationFails(ve),
+			}
+
+			return vfr, nil
+		}
+
+		return model.ValidationFailResponse{}, err
+	}
+
+	return model.ValidationFailResponse{}, nil
+}
+
+func collectValidationFails(ve validator.ValidationErrors) []model.ValidationFail {
 	// collect all messages for a particular field
 	// field: []message
 	fm := make(map[string][]string)
