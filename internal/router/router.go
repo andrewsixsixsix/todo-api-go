@@ -1,6 +1,8 @@
 package router
 
 import (
+	mw "todo-api/internal/middleware"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -8,7 +10,7 @@ import (
 func Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Use(middleware.Logger)
+	r.Use(mw.LoggerMiddleware)
 	r.Use(middleware.Recoverer)
 
 	openapiRouter := openapiRouter()
